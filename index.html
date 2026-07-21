@@ -190,6 +190,8 @@
     if(!ytPlayer||!ytReady) return;
     try{ ytPlayer.setVolume(55); if(typeof muted!=="undefined" && muted){ ytPlayer.mute(); } else { ytPlayer.unMute(); } ytPlayer.playVideo(); }catch(e){}
   }
+  // garante o início mesmo se o 1º toque ocorrer antes do player carregar
+  function ensureMusic(){ if(!wantMusic) return; if(ytReady){ startMusic(); document.removeEventListener("pointerdown", ensureMusic); } }
 
   /* ---------- Dados do evento ---------- */
   var EVENT = new Date("2026-08-22T11:00:00-03:00");
@@ -253,7 +255,7 @@
     if(intro.classList.contains("gone")) return;
     var x=(e&&e.clientX)||innerWidth/2, y=(e&&e.clientY)||innerHeight/2;
     ripple(x,y); actx(); chime([523.25,659.25,783.99,1046.5],0.9);
-    wantMusic=true; startMusic();
+    wantMusic=true; startMusic(); document.addEventListener("pointerdown", ensureMusic);
     intro.classList.add("gone");
     document.body.classList.add("revealed");
     setTimeout(function(){intro.style.display="none";},850);
